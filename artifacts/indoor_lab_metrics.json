@@ -1,0 +1,48 @@
+{
+  "schema_version": "1.0",
+  "map_name": "Arbitrary indoor laboratory map",
+  "map_path": "examples/maps/indoor_lab.yaml",
+  "boundary_policy": "any_overlap",
+  "cell_width_m": 0.9237604307034012,
+  "cell_count": 109,
+  "node_count": 4,
+  "conflict_cell_count": 15,
+  "clustering_iterations": 5,
+  "clustering_converged": true,
+  "auction_bias": 0.5,
+  "node_metrics": [
+    {
+      "node_id": "node-01",
+      "cell_count": 26,
+      "distance_m": 28.114416031055313
+    },
+    {
+      "node_id": "node-02",
+      "cell_count": 28,
+      "distance_m": 28.376838998357055
+    },
+    {
+      "node_id": "node-03",
+      "cell_count": 28,
+      "distance_m": 35.031599995765845
+    },
+    {
+      "node_id": "node-04",
+      "cell_count": 27,
+      "distance_m": 30.835335757100673
+    }
+  ],
+  "cell_count_range": 2,
+  "cell_count_cv": 0.030427750370233025,
+  "distance_range_m": 6.9171839647105315,
+  "distance_cv": 0.09073507335030839,
+  "makespan_distance_m": 35.031599995765845,
+  "total_distance_m": 122.35819078227888,
+  "timings": {
+    "discretization_s": 0.005084500007797033,
+    "clustering_s": 0.018884200006141327,
+    "auction_s": 9.329999738838524e-05,
+    "path_planning_s": 0.0019518000044627115,
+    "total_s": 0.026014600007329136
+  }
+}

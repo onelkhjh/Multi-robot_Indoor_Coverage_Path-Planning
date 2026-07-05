@@ -1,0 +1,23 @@
+schema_version: "1.0"
+name: Arbitrary terrain allocation map
+coordinates:
+  kind: cartesian
+  unit: m
+aoi:
+  exterior: [[0, 0], [95, 0], [95, 30], [62, 30], [62, 75], [25, 75], [25, 52], [0, 52]]
+  holes: []
+no_fly_zones:
+  - exterior: [[38, 18], [52, 18], [52, 34], [38, 34]]
+    holes: []
+nodes:
+  - id: node-a
+    position: [5, 5]
+  - id: node-b
+    position: [55, 65]
+sensor:
+  altitude_m: 8
+  fov_deg: 35
+grid:
+  origin: [0, 0]
+  boundary_policy: any_overlap
+  perimeter_spacing_m: null

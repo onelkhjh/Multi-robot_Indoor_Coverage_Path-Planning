@@ -1,0 +1,33 @@
+schema_version: "1.0"
+name: SCoPP paper-like non-convex map (shape approximation)
+coordinates:
+  kind: cartesian
+  unit: m
+aoi:
+  exterior:
+    - [0, 0]
+    - [120, 0]
+    - [120, 35]
+    - [85, 35]
+    - [85, 80]
+    - [55, 80]
+    - [55, 115]
+    - [0, 115]
+  holes: []
+no_fly_zones:
+  - exterior: [[20, 25], [42, 25], [42, 48], [20, 48]]
+    holes: []
+  - exterior: [[65, 8], [82, 8], [82, 25], [65, 25]]
+    holes: []
+nodes:
+  - id: node-01
+    position: [8, 8]
+  - id: node-02
+    position: [8, 30]
+sensor:
+  altitude_m: 10
+  fov_deg: 30
+grid:
+  origin: [0, 0]
+  boundary_policy: paper_center
+  perimeter_spacing_m: null
