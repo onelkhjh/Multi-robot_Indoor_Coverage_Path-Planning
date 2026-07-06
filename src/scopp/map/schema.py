@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections.abc import Mapping, Sequence
 from math import isfinite
 
-from .geometry import normalize_ring, point_in_ring
+from .geometry import normalize_ring, point_in_polygon, validate_polygon
 from .models import (
     CellBoundaryPolicy, CoordinateReference, GridSpec, MapDefinition,
     NodeStart, PolygonSpec, SensorSpec, XY,
@@ -59,7 +59,12 @@ def _polygon(value: object, path: str) -> PolygonSpec:
     holes_value = obj.get("holes", [])
     if not isinstance(holes_value, Sequence):
         raise MapValidationError(f"{path}/holes", "must be a list")
-    return PolygonSpec(_ring(obj["exterior"], f"{path}/exterior"), tuple(_ring(h, f"{path}/holes/{i}") for i, h in enumerate(holes_value)))
+    result = PolygonSpec(_ring(obj["exterior"], f"{path}/exterior"), tuple(_ring(h, f"{path}/holes/{i}") for i, h in enumerate(holes_value)))
+    try:
+        validate_polygon(result, path=path)
+    except ValueError as exc:
+        raise MapValidationError(path, str(exc)) from exc
+    return result
 
 
 def parse_map(data: Mapping[str, object]) -> MapDefinition:
@@ -116,6 +121,6 @@ def parse_map(data: Mapping[str, object]) -> MapDefinition:
         tuple(starts), sensor, grid,
     )
     for node in definition.node_starts:
-        if not point_in_ring(node.position, definition.aoi.exterior):
+        if not point_in_polygon(node.position, definition.aoi):
             raise MapValidationError("/nodes", f"node {node.id!r} starts outside the AOI")
     return definition

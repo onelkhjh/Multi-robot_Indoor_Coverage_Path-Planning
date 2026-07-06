@@ -64,7 +64,7 @@ class CoverageCell:
     col: int
     center: XY
     vertices: tuple[XY, XY, XY, XY]
-    coverage_geometry: tuple[XY, ...]
+    coverage_geometry: tuple[PolygonSpec, ...]
     coverage_ratio: float
     perimeter_samples: tuple[XY, ...]
 

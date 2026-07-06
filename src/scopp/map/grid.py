@@ -4,8 +4,11 @@ from __future__ import annotations
 
 from math import ceil, floor
 
+from shapely.geometry import Point, box
+from shapely.ops import unary_union
+
 from .footprint import coverage_width
-from .geometry import EPS, clipped_area, point_in_ring
+from .geometry import EPS, geometry_to_specs, polygon_from_spec
 from .models import CellBoundaryPolicy, CoverageCell, DiscretizedMap, MapDefinition, RejectedCell, XY
 
 
@@ -30,6 +33,8 @@ def discretize_map(definition: MapDefinition) -> DiscretizedMap:
     width = coverage_width(definition.sensor.altitude_m, definition.sensor.fov_deg)
     spacing = definition.grid.perimeter_spacing_m or width / 8.0
     aoi = definition.aoi.exterior
+    aoi_geometry = polygon_from_spec(definition.aoi)
+    no_fly_geometry = unary_union(tuple(polygon_from_spec(zone) for zone in definition.no_fly_zones))
     xmin, ymin = min(p[0] for p in aoi), min(p[1] for p in aoi)
     xmax, ymax = max(p[0] for p in aoi), max(p[1] for p in aoi)
     origin = definition.grid.origin or (xmin, ymin)
@@ -44,13 +49,11 @@ def discretize_map(definition: MapDefinition) -> DiscretizedMap:
             rect = (x0, y0, x0 + width, y0 + width)
             center = (x0 + width / 2, y0 + width / 2)
             vertices = ((x0, y0), (x0 + width, y0), (x0 + width, y0 + width), (x0, y0 + width))
-            outer_area, clipped = clipped_area(aoi, rect)
-            hole_area = sum(clipped_area(hole, rect)[0] for hole in definition.aoi.holes)
-            aoi_area = max(0.0, outer_area - hole_area)
-            no_fly_area = sum(clipped_area(zone.exterior, rect)[0] for zone in definition.no_fly_zones)
-            for zone in definition.no_fly_zones:
-                no_fly_area -= sum(clipped_area(hole, rect)[0] for hole in zone.holes)
-            center_valid = point_in_ring(center, aoi) and not any(point_in_ring(center, h) for h in definition.aoi.holes)
+            cell_geometry = box(*rect)
+            coverage_geometry = cell_geometry.intersection(aoi_geometry)
+            aoi_area = coverage_geometry.area
+            no_fly_area = cell_geometry.intersection(no_fly_geometry).area if not no_fly_geometry.is_empty else 0.0
+            center_valid = aoi_geometry.covers(Point(center))
             accepted_by_aoi = center_valid if definition.grid.boundary_policy is CellBoundaryPolicy.PAPER_CENTER else aoi_area > EPS
             if not accepted_by_aoi:
                 rejected.append(RejectedCell(row, col, center, "outside_aoi"))
@@ -59,7 +62,7 @@ def discretize_map(definition: MapDefinition) -> DiscretizedMap:
                 rejected.append(RejectedCell(row, col, center, "intersects_no_fly_zone"))
                 continue
             cells.append(CoverageCell(
-                _cell_id(row, col), row, col, center, vertices, clipped,
+                _cell_id(row, col), row, col, center, vertices, geometry_to_specs(coverage_geometry),
                 min(1.0, aoi_area / (width * width)), _perimeter(vertices, width, spacing),
             ))
     return DiscretizedMap(definition, width, tuple(cells), tuple(rejected))
