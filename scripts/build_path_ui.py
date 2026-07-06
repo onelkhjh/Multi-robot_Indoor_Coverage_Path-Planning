@@ -9,22 +9,14 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from scopp import ScoppConfig, allocate_conflict_cells, cluster_map, discretize_map, load_map, plan_coverage_paths
+from scopp import ScoppConfig, ScoppPipeline
 from scopp.config import ClusteringProfile
 from scopp.ui import render_path_ui
 
 
 def build_data(map_file: Path, config: ScoppConfig) -> dict[str, object]:
-    mapped = discretize_map(load_map(map_file))
-    clustered = cluster_map(
-        mapped,
-        profile=config.clustering_profile,
-        random_seed=config.random_seed,
-        tolerance_m=config.clustering_tolerance_m,
-        max_iterations=config.clustering_max_iterations,
-    )
-    allocation = allocate_conflict_cells(mapped, clustered, bias=config.auction_bias)
-    plan = plan_coverage_paths(mapped, allocation)
+    result = ScoppPipeline(config).run_map(map_file)
+    mapped, clustered, allocation, plan = result.mapped, result.clustered, result.allocation, result.plan
     owners = dict(allocation.owner_by_cell)
     return {
         "name": mapped.source.name,

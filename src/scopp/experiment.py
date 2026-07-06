@@ -5,15 +5,10 @@ from __future__ import annotations
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from statistics import fmean, pstdev
-from time import perf_counter
-
-from scopp.algorithm.auction import allocate_conflict_cells
-from scopp.algorithm.clustering import cluster_map
-from scopp.algorithm.path_planning import plan_coverage_paths
-from scopp.map.grid import discretize_map
 from scopp.map.io import load_map
 from scopp.map.models import MapDefinition
 from scopp.config import ClusteringProfile, ScoppConfig
+from scopp.pipeline import ScoppPipeline
 
 
 @dataclass(frozen=True, slots=True)
@@ -78,24 +73,8 @@ def run_definition(
 ) -> ExperimentReport:
     """Execute the complete pipeline for an already validated map."""
     settings = config or ScoppConfig(ClusteringProfile(clustering_profile), random_seed, auction_bias)
-    total_start = perf_counter()
-
-    start = perf_counter()
-    mapped = discretize_map(definition)
-    discretization_s = perf_counter() - start
-
-    start = perf_counter()
-    clustered = cluster_map(mapped, profile=settings.clustering_profile, random_seed=settings.random_seed, tolerance_m=settings.clustering_tolerance_m, max_iterations=settings.clustering_max_iterations)
-    clustering_s = perf_counter() - start
-
-    start = perf_counter()
-    allocated = allocate_conflict_cells(mapped, clustered, bias=settings.auction_bias)
-    auction_s = perf_counter() - start
-
-    start = perf_counter()
-    planned = plan_coverage_paths(mapped, allocated)
-    path_planning_s = perf_counter() - start
-    total_s = perf_counter() - total_start
+    pipeline = ScoppPipeline(settings).run_definition(definition)
+    mapped, clustered, allocated, planned = pipeline.mapped, pipeline.clustered, pipeline.allocation, pipeline.plan
 
     node_metrics = tuple(
         NodeMetrics(path.node_id, len(path.cell_ids), path.distance_m)
@@ -124,7 +103,13 @@ def run_definition(
         distance_cv=_coefficient_of_variation(distances),
         makespan_distance_m=planned.makespan_distance_m,
         total_distance_m=planned.total_distance_m,
-        timings=StageTimings(discretization_s, clustering_s, auction_s, path_planning_s, total_s),
+        timings=StageTimings(
+            pipeline.timings.discretization_s,
+            pipeline.timings.clustering_s,
+            pipeline.timings.auction_s,
+            pipeline.timings.path_planning_s,
+            pipeline.timings.total_s,
+        ),
     )
 
 
