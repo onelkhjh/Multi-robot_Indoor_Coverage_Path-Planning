@@ -158,6 +158,25 @@ metres; geographic conversion is outside the current laboratory scope.
 ```powershell
 python -m pip install -e ".[test]"
 python -m pytest
+python scripts/build_path_ui.py examples/maps/indoor_lab.yaml --profile official_minibatch --seed 0 --path-profile metric_tsp --output artifacts/official_minibatch_metric_tsp_path_ui.html
+python scripts/plan_map.py examples/maps/indoor_lab.yaml --profile official_minibatch --seed 0 --path-profile metric_tsp --output artifacts/official_minibatch_metric_tsp_plan.png
+python scripts/run_experiment.py examples/maps/indoor_lab.yaml --profile official_minibatch --seed 0 --path-profile metric_tsp --output artifacts/official_minibatch_metric_tsp_metrics.json
+```
+
+The current interactive workflow uses `official_minibatch` clustering and
+`metric_tsp` path planning. This matches the UI artifact at
+`artifacts/official_minibatch_metric_tsp_path_ui.html`: MiniBatchKMeans creates
+the clusters, conflict cells are resolved by the existing auction, and each
+node's assigned cells are ordered with a valid-cell graph metric closure. Small
+routes use exact Held-Karp TSP; larger routes use deterministic insertion plus
+2-opt so the UI remains responsive.
+
+The original paper-style deterministic Lloyd clustering and nearest-neighbor
+route planner remain available as the default reproduction baseline.
+
+Baseline reproduction commands:
+
+```powershell
 python scripts/plan_map.py examples/maps/indoor_lab.yaml --output artifacts/indoor_lab_plan.png
 python scripts/run_experiment.py examples/maps/indoor_lab.yaml --output artifacts/indoor_lab_metrics.json
 python scripts/run_scaling.py examples/maps/indoor_lab.yaml --output artifacts/indoor_scaling.csv --plot artifacts/indoor_scaling.png
