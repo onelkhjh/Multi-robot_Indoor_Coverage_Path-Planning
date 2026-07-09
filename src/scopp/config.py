@@ -12,9 +12,15 @@ class ClusteringProfile(str, Enum):
     OFFICIAL_MINIBATCH = "official_minibatch"
 
 
+class PathPlanningProfile(str, Enum):
+    PAPER_NN = "paper_nn"
+    METRIC_TSP = "metric_tsp"
+
+
 @dataclass(frozen=True, slots=True)
 class ScoppConfig:
     clustering_profile: ClusteringProfile = ClusteringProfile.DETERMINISTIC_LLOYD
+    path_planning_profile: PathPlanningProfile = PathPlanningProfile.PAPER_NN
     random_seed: int = 0
     auction_bias: float = 0.5
     clustering_tolerance_m: float | None = None
@@ -31,5 +37,5 @@ class ScoppConfig:
             raise ValueError("clustering_max_iterations must be greater than zero")
 
     @classmethod
-    def from_cli(cls, profile: str, seed: int, bias: float = 0.5) -> "ScoppConfig":
-        return cls(ClusteringProfile(profile), seed, bias)
+    def from_cli(cls, profile: str, seed: int, bias: float = 0.5, path_profile: str = PathPlanningProfile.PAPER_NN.value) -> "ScoppConfig":
+        return cls(ClusteringProfile(profile), PathPlanningProfile(path_profile), seed, bias)

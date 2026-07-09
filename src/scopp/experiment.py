@@ -40,6 +40,7 @@ class ExperimentReport:
     clustering_iterations: int
     clustering_converged: bool
     clustering_profile: str
+    path_planning_profile: str
     random_seed: int | None
     auction_bias: float
     node_metrics: tuple[NodeMetrics, ...]
@@ -72,7 +73,11 @@ def run_definition(
     config: ScoppConfig | None = None,
 ) -> ExperimentReport:
     """Execute the complete pipeline for an already validated map."""
-    settings = config or ScoppConfig(ClusteringProfile(clustering_profile), random_seed, auction_bias)
+    settings = config or ScoppConfig(
+        clustering_profile=ClusteringProfile(clustering_profile),
+        random_seed=random_seed,
+        auction_bias=auction_bias,
+    )
     pipeline = ScoppPipeline(settings).run_definition(definition)
     mapped, clustered, allocated, planned = pipeline.mapped, pipeline.clustered, pipeline.allocation, pipeline.plan
 
@@ -94,6 +99,7 @@ def run_definition(
         clustering_iterations=clustered.iterations,
         clustering_converged=clustered.converged,
         clustering_profile=clustered.profile,
+        path_planning_profile=settings.path_planning_profile.value,
         random_seed=clustered.random_seed,
         auction_bias=settings.auction_bias,
         node_metrics=node_metrics,

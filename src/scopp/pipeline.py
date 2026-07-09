@@ -59,7 +59,7 @@ class ScoppPipeline:
         auction_s = perf_counter() - start
 
         start = perf_counter()
-        plan = plan_coverage_paths(mapped, allocation)
+        plan = plan_coverage_paths(mapped, allocation, profile=self.config.path_planning_profile)
         path_planning_s = perf_counter() - start
         timings = PipelineTimings(discretization_s, clustering_s, auction_s, path_planning_s, perf_counter() - total_start)
         return PipelineResult(self.config, mapped, clustered, allocation, plan, timings)

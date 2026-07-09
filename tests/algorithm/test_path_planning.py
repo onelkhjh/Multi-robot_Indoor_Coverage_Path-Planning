@@ -2,8 +2,9 @@ from pathlib import Path
 
 import pytest
 
-from scopp import allocate_conflict_cells, cluster_map, discretize_map, load_map, plan_coverage_paths
+from scopp import PathPlanningProfile, allocate_conflict_cells, cluster_map, discretize_map, load_map, plan_coverage_paths
 from scopp.algorithm.auction import AllocationResult, NodeAllocation
+from scopp.map.schema import parse_map
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -58,3 +59,24 @@ def test_motion_path_uses_only_four_neighbor_cells() -> None:
         for first, second in zip(path.motion_cell_ids, path.motion_cell_ids[1:]):
             a, b = by_id[first], by_id[second]
             assert abs(a.row - b.row) + abs(a.col - b.col) == 1
+
+
+def test_metric_tsp_uses_shortest_metric_closure_cycle() -> None:
+    mapped = discretize_map(parse_map({
+        "schema_version": "1.0",
+        "name": "metric-tsp",
+        "coordinates": {"kind": "cartesian", "unit": "m"},
+        "aoi": {"exterior": [[0, 0], [3, 0], [3, 4], [0, 4]]},
+        "nodes": [{"id": "n1", "position": [0.5, 0.5]}],
+        "sensor": {"altitude_m": 0.5, "fov_deg": 90},
+        "grid": {"origin": [0, 0], "boundary_policy": "paper_center"},
+    }))
+    ids = ("r1_c0", "r2_c0", "r3_c0", "r0_c1", "r1_c2")
+    allocation = AllocationResult((NodeAllocation(0, "n1", ids),), tuple((cell_id, 0) for cell_id in ids), (), 0.5, (0.0,))
+
+    greedy = plan_coverage_paths(mapped, allocation, profile=PathPlanningProfile.PAPER_NN).paths[0]
+    optimal = plan_coverage_paths(mapped, allocation, profile=PathPlanningProfile.METRIC_TSP).paths[0]
+
+    assert greedy.distance_m == pytest.approx(12.0)
+    assert optimal.distance_m == pytest.approx(10.0)
+    assert set(optimal.cell_ids) == set(ids)

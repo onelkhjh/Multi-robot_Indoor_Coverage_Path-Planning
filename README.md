@@ -147,6 +147,9 @@ metres; geographic conversion is outside the current laboratory scope.
   cluster-to-node association;
 - conflict detection and the greedy `cell count + B × d0` auction;
 - KD-tree nearest-neighbor coverage routes returning to each node start;
+- optional `metric_tsp` path planning that builds a valid-cell graph metric
+  closure, solves the depot-return TSP exactly for small assignments, and uses
+  deterministic insertion plus 2-opt for larger assignments;
 - deterministic 4-neighbor A* expansion between consecutive coverage targets;
 - JSON experiment metrics and CSV/PNG node-count scaling reports.
 
@@ -159,6 +162,13 @@ python scripts/plan_map.py examples/maps/indoor_lab.yaml --output artifacts/indo
 python scripts/run_experiment.py examples/maps/indoor_lab.yaml --output artifacts/indoor_lab_metrics.json
 python scripts/run_scaling.py examples/maps/indoor_lab.yaml --output artifacts/indoor_scaling.csv --plot artifacts/indoor_scaling.png
 ```
+
+Use `--path-profile metric_tsp` on `plan_map.py`, `run_experiment.py`, or
+`build_path_ui.py` to select the metric-closure TSP route planner. The default
+remains `paper_nn` to keep the SCoPP reproduction path separate from the graph
+TSP extension. Exact Held-Karp is used up to 20 assigned cells per node; larger
+assignments use a deterministic metric-TSP heuristic unless an external exact
+solver is added later.
 
 ### Reproduction boundary
 

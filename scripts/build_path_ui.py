@@ -10,7 +10,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 from scopp import ScoppConfig, ScoppPipeline
-from scopp.config import ClusteringProfile
+from scopp.config import ClusteringProfile, PathPlanningProfile
 from scopp.ui import render_path_ui
 
 
@@ -38,10 +38,11 @@ def main() -> None:
     parser.add_argument("map_file", type=Path)
     parser.add_argument("--output", type=Path, default=Path("artifacts/path_ui.html"))
     parser.add_argument("--profile", choices=[item.value for item in ClusteringProfile], default=ClusteringProfile.DETERMINISTIC_LLOYD.value)
+    parser.add_argument("--path-profile", choices=[item.value for item in PathPlanningProfile], default=PathPlanningProfile.PAPER_NN.value)
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--bias", type=float, default=0.5)
     args = parser.parse_args()
-    config = ScoppConfig.from_cli(args.profile, args.seed, args.bias)
+    config = ScoppConfig.from_cli(args.profile, args.seed, args.bias, args.path_profile)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(render_path_ui(build_data(args.map_file, config)), encoding="utf-8")
     print(f"wrote {args.output}")

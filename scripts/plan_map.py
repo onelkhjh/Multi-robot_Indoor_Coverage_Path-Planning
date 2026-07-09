@@ -14,6 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 from scopp import ClusteringProfile, ScoppConfig, ScoppPipeline
+from scopp.config import PathPlanningProfile
 from scopp.map.visualization import render_plan
 
 
@@ -22,9 +23,10 @@ def main() -> None:
     parser.add_argument("map_file", type=Path)
     parser.add_argument("--output", type=Path, default=Path("plan.png"))
     parser.add_argument("--profile", choices=[item.value for item in ClusteringProfile], default=ClusteringProfile.DETERMINISTIC_LLOYD.value)
+    parser.add_argument("--path-profile", choices=[item.value for item in PathPlanningProfile], default=PathPlanningProfile.PAPER_NN.value)
     parser.add_argument("--seed", type=int, default=0)
     args = parser.parse_args()
-    config = ScoppConfig.from_cli(args.profile, args.seed)
+    config = ScoppConfig.from_cli(args.profile, args.seed, path_profile=args.path_profile)
     result = ScoppPipeline(config).run_map(args.map_file)
     figure, _ = render_plan(result.mapped, result.allocation, result.plan)
     args.output.parent.mkdir(parents=True, exist_ok=True)

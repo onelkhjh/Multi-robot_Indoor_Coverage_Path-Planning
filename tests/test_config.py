@@ -1,11 +1,12 @@
 import pytest
 
-from scopp.config import ClusteringProfile, ScoppConfig
+from scopp.config import ClusteringProfile, PathPlanningProfile, ScoppConfig
 
 
 def test_config_parses_cli_profile() -> None:
-    value = ScoppConfig.from_cli("official_minibatch", 17, 0.25)
+    value = ScoppConfig.from_cli("official_minibatch", 17, 0.25, "metric_tsp")
     assert value.clustering_profile is ClusteringProfile.OFFICIAL_MINIBATCH
+    assert value.path_planning_profile is PathPlanningProfile.METRIC_TSP
     assert value.random_seed == 17
     assert value.auction_bias == 0.25
 
