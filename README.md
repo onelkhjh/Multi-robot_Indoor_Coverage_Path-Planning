@@ -1,26 +1,34 @@
 # Multi-robot Indoor Coverage Path Planning
 
-이 저장소는 SCoPP 논문 *Scalable Coverage Path Planning of Multi-Robot Teams for Monitoring Non-Convex Areas* (arXiv:2103.14709)과 저자의 공식 코드를 기준선으로 두고, 같은 조건에서 더 나은 KPI를 만들며 실내 비행에 적합하게 최적화하는 실험 저장소이다.
+## 한국어
 
-논문과 공식 코드는 clustering, auction, coverage path planning의 reference baseline으로 유지한다. 여기서 재현은 기준선을 정의하는 역할이고, 실제 초점은 비교 실험과 개선 결과에 있다. 즉, “논문을 얼마나 그대로 구현했는가”보다 “같은 상태에서 얼마나 더 좋은 결과를 만들었는가”를 더 중요하게 본다.
+이 저장소는 Leighton Collins et al.의 논문 *Scalable Coverage Path Planning of Multi-Robot Teams for Monitoring Non-Convex Areas* (arXiv:2103.14709)과 저자 공식 코드를 기준선으로 두고, 같은 조건에서 더 나은 KPI를 만드는 방향으로 진행한다.
 
-이 프로젝트는 Multi-robot Indoor Coverage Path Planning 관점에서, 실내 환경에서 실제로 쓰기 좋은 경로와 KPI를 만드는 쪽으로 진행한다. 따라서 direct-distance와 executable-distance를 섞지 않고, 같은 맵과 같은 할당과 같은 제약 조건에서만 비교한다.
+기준선으로 유지하는 범위는 clustering, auction, coverage path planning이다. 이 세 단계는 논문 재현의 기준으로 남겨두되, 실제 작업 초점은 실내 비행에 더 적합한 경로와 지표를 만드는 쪽에 둔다.
+
+이 프로젝트는 Multi-robot Indoor Coverage Path Planning으로 정리한다. 따라서 direct-distance와 executable-distance를 섞지 않고, 동일한 맵과 동일한 할당, 동일한 제약 조건에서만 비교한다.
 
 ## 핵심 방향
 
 - baseline reference: SCoPP 논문 + 공식 코드
 - comparison focus: 같은 상태에서의 KPI 비교
-- optimization focus: multi-robot indoor flight에 더 적합한 경로와 지표
+- optimization focus: 실내 비행에 더 적합한 경로와 지표
 - reporting discipline: direct-distance와 executable-distance를 섞지 않음
 - reference retention: clustering, auction, coverage path planning은 기준선으로 유지
 
-## 현재 핵심 산출물
+## 현재 보관 중인 핵심 결과물
 
 - `artifacts/path_planner_exec_only_v1.json`
 - `artifacts/path_planner_exec_only_v1.png`
 - `artifacts/executable_kpi_result.md`
+- `artifacts/indoor_lab.png`
+- `artifacts/indoor_lab_plan.png`
+- `artifacts/indoor_lab_metrics.json`
+- `artifacts/paper_like.png`
 
-## 실행
+## 생성 방법
+
+UI는 Python 스크립트가 생성하고, 원본 템플릿은 `src/scopp/ui/`에 둔다.
 
 ```powershell
 python -m pip install -e ".[test]"
@@ -31,7 +39,7 @@ python scripts/build_path_comparison_ui.py examples/maps/indoor_lab.yaml --outpu
 python scripts/compare_path_planners.py examples/maps/indoor_lab.yaml --seed 0 --bias 0.5 --output artifacts/path_planner_exec_only_v1.json --plot artifacts/path_planner_exec_only_v1.png
 ```
 
-## exec-only 비교 결과
+## 실행 기준 비교 결과
 
 핵심 비교 결과는 `artifacts/path_planner_exec_only_v1.png` 이다. 이 결과는 동일한 `grid-adjacent executable` 모델과 no-fly 차단 조건에서 Metric-TSP와 public-code NN을 비교한다.
 
@@ -39,22 +47,22 @@ python scripts/compare_path_planners.py examples/maps/indoor_lab.yaml --seed 0 -
 
 ## 서브 에이전트
 
-서브 에이전트 역할과 사용 원칙은 [docs/subagents.md](docs/subagents.md) 에 정리되어 있다.
+서브 에이전트 역할과 사용 규칙은 [docs/subagents.md](docs/subagents.md) 에 정리되어 있다.
 
 ## 참고
 
-- `path_ui.html`, `progress_ui.html`, `path_comparison_ui.html` 은 Python 스크립트가 생성하는 UI 템플릿이다.
-- 최종 KPI 요약에서는 direct-distance 수치를 사용하지 않는다.
+- `path_ui.html`, `progress_ui.html`, `path_comparison_ui.html` 는 Python 스크립트가 생성하는 UI 템플릿이다.
+- 최종 KPI 보고는 direct-distance 숫자를 사용하지 않는다.
 
 ---
 
-# Multi-robot Indoor Coverage Path Planning
+## English
 
-This repository uses the SCoPP paper *Scalable Coverage Path Planning of Multi-Robot Teams for Monitoring Non-Convex Areas* (arXiv:2103.14709) and the official author code as the baseline reference, while pursuing better KPI under the same conditions and optimizing the result for indoor flight.
+This repository uses the SCoPP paper *Scalable Coverage Path Planning of Multi-Robot Teams for Monitoring Non-Convex Areas* (arXiv:2103.14709) and the official author code as the baseline reference, while targeting better KPI under the same conditions and optimizing for indoor flight.
 
-The paper and official code remain the reference baseline for clustering, auction, and coverage path planning. In this project, reproduction defines the baseline; the main focus is on comparison experiments and improved results. The key question is not whether the paper was copied exactly, but whether the same state produces a better outcome.
+The baseline scope stays focused on clustering, auction, and coverage path planning. Those stages remain the reference behavior for reproduction, but the main project emphasis is on routes and metrics that are more suitable for indoor flight.
 
-The project is framed as Multi-robot Indoor Coverage Path Planning, so the priority is practical indoor behavior: routes, metrics, and comparisons that are actually suitable for indoor flight. Direct-distance and executable-distance are never mixed; comparisons are always made under the same map, the same allocation, and the same constraints.
+The project is framed as Multi-robot Indoor Coverage Path Planning. Direct-distance and executable-distance are never mixed; comparisons are always made under the same map, the same allocation, and the same constraints.
 
 ## Core direction
 
@@ -69,6 +77,10 @@ The project is framed as Multi-robot Indoor Coverage Path Planning, so the prior
 - `artifacts/path_planner_exec_only_v1.json`
 - `artifacts/path_planner_exec_only_v1.png`
 - `artifacts/executable_kpi_result.md`
+- `artifacts/indoor_lab.png`
+- `artifacts/indoor_lab_plan.png`
+- `artifacts/indoor_lab_metrics.json`
+- `artifacts/paper_like.png`
 
 ## Run
 
@@ -93,7 +105,5 @@ The sub-agent roles and usage rules are documented in [docs/subagents.md](docs/s
 
 ## Notes
 
-- `path_ui.html` is the main route exploration UI.
-- `progress_ui.html` is the main project progress UI.
-- `path_comparison_ui.html` is the executable comparison UI.
+- `path_ui.html`, `progress_ui.html`, and `path_comparison_ui.html` are Python-generated UI templates.
 - Final KPI reporting does not use direct-distance numbers.
