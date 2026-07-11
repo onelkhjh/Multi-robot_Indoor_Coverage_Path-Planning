@@ -63,11 +63,11 @@ The SCoPP paper and official code remain the reproduction baseline. The active i
 
 ## Attribution and third-party software
 
-This is an independently structured derivative implementation informed by the SCoPP paper and the authors' MIT-licensed official implementation. It is not a byte-for-byte copy or an official release of the SCoPP authors.
+This project references the SCoPP paper and the authors' MIT-licensed official implementation, and adds indoor coverage-planning adaptations for this repository's use cases.
 
 - Upstream reference: [adamslab-ub/SCoPP](https://github.com/adamslab-ub/SCoPP)
 - Paper: Collins et al., *Scalable Coverage Path Planning of Multi-Robot Teams for Monitoring Non-Convex Areas*, ICRA 2021, arXiv:2103.14709
 - Retained reference behavior: clustering, conflict-cell auction, and `paper_nn`
 - Project extensions: indoor map policies, no-fly handling, executable 4-neighbor transit, `approx_metric_tsp`, KPI reporting, and experiment UIs
 
-See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for dependency and attribution details. No license is granted for this repository's original work merely by this notice; a repository-level license must be selected separately by its owner.
+See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for dependency and attribution details.

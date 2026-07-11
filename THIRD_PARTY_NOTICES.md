@@ -1,6 +1,6 @@
 # Third-Party Notices and Attribution
 
-This project uses open-source software and is informed by published research. This notice distinguishes upstream reference behavior, installed dependencies, and project-specific extensions.
+This project uses open-source software and references published research. The following information records the main upstream reference and runtime dependencies.
 
 ## SCoPP upstream reference
 
@@ -10,7 +10,7 @@ This project uses open-source software and is informed by published research. Th
 - Paper: L. Collins, P. Ghassemi, S. Chowdhury, K. Dantu, E. Esfahani, and D. Doermann, ICRA 2021, arXiv:2103.14709
 - Code reference used for parity review: `monitoring_algorithms.py` and `SCoPP_settings.py` from the upstream `main` branch
 
-The present repository is an independently structured derivative implementation. It preserves SCoPP behavior as an explicit comparison baseline for clustering, conflict-cell auction, and `paper_nn`; it is not represented as an official SCoPP release or a byte-for-byte reproduction.
+The present repository keeps SCoPP behavior as a comparison baseline for clustering, conflict-cell auction, and `paper_nn`, while adding project-specific indoor planning features.
 
 Project-specific extensions include:
 
@@ -20,7 +20,7 @@ Project-specific extensions include:
 - deterministic cheapest insertion plus 2-opt under `approx_metric_tsp`;
 - direct/executable KPI separation and experiment UIs.
 
-The upstream SCoPP license and copyright notice remain available in its official repository. If upstream source files or substantial source fragments are copied into this repository in the future, their MIT copyright and license text must accompany those copies.
+The upstream SCoPP license and copyright information are available in its official repository.
 
 ## Runtime dependencies
 
@@ -32,8 +32,4 @@ The project installs and imports the following third-party Python packages rathe
 - scikit-learn
 - Shapely
 
-The test environment additionally uses pytest. Each dependency remains governed by its own license and copyright notices as distributed by its maintainers.
-
-## Project license status
-
-This notice does not select a license for the original work in this repository. The repository owner should add a root `LICENSE` file before inviting unrestricted reuse or external contributions.
+The test environment additionally uses pytest. Each dependency is distributed under the terms provided by its maintainers.
